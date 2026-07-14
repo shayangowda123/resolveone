@@ -1,0 +1,17 @@
+package com.resolveone.enums;
+
+public enum ResponsibleDepartment {
+
+    FACILITIES,
+    ELECTRICAL_MAINTENANCE,
+    PLUMBING,
+    HOUSEKEEPING,
+    IT_SUPPORT,
+    ACADEMIC_AFFAIRS,
+    TRANSPORT_OFFICE,
+    HOSTEL_ADMINISTRATION,
+    CANTEEN_MANAGEMENT,
+    CAMPUS_SECURITY,
+    GENERAL_ADMINISTRATION
+
+}

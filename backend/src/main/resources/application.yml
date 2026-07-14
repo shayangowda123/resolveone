@@ -1,0 +1,73 @@
+
+server:
+  port: ${PORT:8080}
+
+spring:
+  application:
+    name: ResolveOne
+
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5433/complaint_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+
+    show-sql: ${SHOW_SQL:false}
+
+    properties:
+      hibernate:
+        format_sql: true
+
+  ai:
+    model:
+      chat: openai
+      embedding: none
+      image: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: none
+
+    openai:
+      api-key: ${OPENROUTER_API_KEY}
+      base-url: https://openrouter.ai/api
+
+      chat:
+        options:
+          model: openrouter/free
+          temperature: 0.1
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+
+notification:
+  escalation:
+    facilities-head: ${FACILITIES_HEAD_EMAIL}
+    it-head: ${IT_HEAD_EMAIL}
+    academic-head: ${ACADEMIC_HEAD_EMAIL}
+    transport-head: ${TRANSPORT_HEAD_EMAIL}
+    hostel-head: ${HOSTEL_HEAD_EMAIL}
+    canteen-head: ${CANTEEN_HEAD_EMAIL}
+    security-head: ${SECURITY_HEAD_EMAIL}
+    admin: ${ADMIN_EMAIL}
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}
+
