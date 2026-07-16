@@ -2,6 +2,7 @@ package com.resolveone.service;
 
 import com.resolveone.dto.request.CreateComplaintRequest;
 import com.resolveone.dto.response.ComplaintResponse;
+import com.resolveone.dto.response.StaffResponse;
 
 import java.util.List;
 
@@ -49,4 +50,14 @@ public interface ComplaintService {
             Long complaintId
     );
     List<ComplaintResponse> getEscalatedComplaints();
+
+    List<StaffResponse> getEligibleStaff(
+            Long complaintId
+    );
+    ComplaintResponse assignComplaintToStaff(
+            Long complaintId,
+            Long staffId
+    );
+
+
 }

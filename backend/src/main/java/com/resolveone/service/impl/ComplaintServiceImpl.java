@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import com.resolveone.dto.response.StaffResponse;
+import com.resolveone.enums.Role;
 @Service
 public class ComplaintServiceImpl implements ComplaintService {
 
@@ -120,6 +121,14 @@ public class ComplaintServiceImpl implements ComplaintService {
             Long complaintId,
             String authenticatedUserEmail) {
 
+        User authenticatedUser = userRepository
+                .findByEmail(authenticatedUserEmail)
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Authenticated user not found"
+                        )
+                );
+
         Complaint complaint = complaintRepository
                 .findById(complaintId)
                 .orElseThrow(() ->
@@ -129,10 +138,38 @@ public class ComplaintServiceImpl implements ComplaintService {
                         )
                 );
 
-        if (!complaint.getCreatedBy()
-                .getEmail()
-                .equals(authenticatedUserEmail)) {
+        boolean canAccess = switch (authenticatedUser.getRole()) {
 
+            // Student can only see their own complaint
+            case STUDENT ->
+                    complaint.getCreatedBy()
+                            .getId()
+                            .equals(authenticatedUser.getId());
+
+            // Staff can only see complaints routed
+            // to their responsible department
+            case STAFF ->
+                    authenticatedUser.getResponsibleDepartment() != null
+                            && authenticatedUser
+                            .getResponsibleDepartment()
+                            .equals(
+                                    complaint.getResponsibleDepartment()
+                            );
+
+            // Management can inspect escalated complaints
+            case HOD, DEAN, PRINCIPAL ->
+                    complaint.getStatus()
+                            == ComplaintStatus.ESCALATED;
+
+            // Admin has full access
+            case ADMIN ->
+                    true;
+
+            default ->
+                    false;
+        };
+
+        if (!canAccess) {
             throw new ComplaintNotFoundException(
                     "Complaint not found with id: "
                             + complaintId
@@ -194,6 +231,49 @@ public class ComplaintServiceImpl implements ComplaintService {
                 .map(this::mapToResponse)
                 .toList();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<StaffResponse> getEligibleStaff(
+            Long complaintId) {
+
+        Complaint complaint = complaintRepository
+                .findById(complaintId)
+                .orElseThrow(() ->
+                        new ComplaintNotFoundException(
+                                "Complaint not found with id: "
+                                        + complaintId
+                        )
+                );
+
+        return userRepository
+                .findByRoleAndResponsibleDepartment(
+                        Role.STAFF,
+                        complaint.getResponsibleDepartment()
+                )
+                .stream()
+                .filter(User::isEnabled)
+                .map(staff -> {
+
+                    StaffResponse response =
+                            new StaffResponse();
+
+                    response.setId(staff.getId());
+                    response.setFullName(staff.getFullName());
+                    response.setCollegeId(staff.getCollegeId());
+                    response.setEmail(staff.getEmail());
+                    response.setRole(staff.getRole());
+                    response.setDepartment(staff.getDepartment());
+                    response.setResponsibleDepartment(
+                            staff.getResponsibleDepartment()
+                    );
+                    response.setActive(staff.getActive());
+
+                    return response;
+                })
+                .toList();
+    }
+
     @Override
     @Transactional
     public ComplaintResponse assignComplaintToSelf(
@@ -250,6 +330,82 @@ public class ComplaintServiceImpl implements ComplaintService {
                 complaintRepository.save(complaint);
 
         return mapToResponse(savedComplaint);
+    }
+
+
+    @Override
+    @Transactional
+    public ComplaintResponse assignComplaintToStaff(
+            Long complaintId,
+            Long staffId) {
+
+        Complaint complaint = complaintRepository
+                .findById(complaintId)
+                .orElseThrow(() ->
+                        new ComplaintNotFoundException(
+                                "Complaint not found with id: "
+                                        + complaintId
+                        )
+                );
+
+        User staff = userRepository
+                .findById(staffId)
+                .orElseThrow(() ->
+                        new IllegalStateException(
+                                "Staff user not found with id: "
+                                        + staffId
+                        )
+                );
+
+        // The selected user must actually be STAFF
+        if (staff.getRole() != com.resolveone.enums.Role.STAFF) {
+            throw new IllegalStateException(
+                    "Selected user is not a staff member"
+            );
+        }
+
+        // Staff account must be active
+        if (!staff.isEnabled()) {
+            throw new IllegalStateException(
+                    "Selected staff account is inactive"
+            );
+        }
+
+        // Staff must belong to a responsible department
+        if (staff.getResponsibleDepartment() == null) {
+            throw new IllegalStateException(
+                    "Selected staff is not assigned to a responsible department"
+            );
+        }
+
+        // Prevent assigning a Facilities complaint to Plumbing staff, etc.
+        if (!staff.getResponsibleDepartment()
+                .equals(complaint.getResponsibleDepartment())) {
+
+            throw new IllegalStateException(
+                    "Selected staff does not belong to the complaint's responsible department"
+            );
+        }
+
+        // This management action is specifically for escalated complaints
+        if (complaint.getStatus() != ComplaintStatus.ESCALATED) {
+            throw new IllegalStateException(
+                    "Only escalated complaints can be assigned by management"
+            );
+        }
+
+        complaint.setAssignedTo(staff);
+
+        // Important:
+        // Do NOT change ESCALATED to ASSIGNED here.
+        // The complaint should remain visible in the management escalation queue
+        // until it is actually resolved.
+        complaint.setStatus(ComplaintStatus.ESCALATED);
+
+        Complaint updatedComplaint =
+                complaintRepository.save(complaint);
+
+        return mapToResponse(updatedComplaint);
     }
 
 
