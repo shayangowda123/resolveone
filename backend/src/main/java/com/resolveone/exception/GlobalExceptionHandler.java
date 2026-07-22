@@ -1,5 +1,5 @@
 package com.resolveone.exception;
-
+import org.springframework.security.authentication.DisabledException;
 import com.resolveone.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +38,22 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDisabledException(
+            DisabledException ex) {
+
+        ApiResponse<Void> response =
+                ApiResponse.error(
+                        "Your account has been disabled. Please contact the administrator."
+                );
+
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(response);
+    }
+
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(
             MethodArgumentNotValidException ex) {
@@ -68,6 +84,18 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ComplaintNotFoundException.class)
     public ResponseEntity<ApiResponse<Void>> handleComplaintNotFound(
             ComplaintNotFoundException ex) {
+
+        ApiResponse<Void> response =
+                ApiResponse.error(ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(response);
+    }
+
+    @ExceptionHandler(EmployeeNotFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleEmployeeNotFound(
+            EmployeeNotFoundException ex) {
 
         ApiResponse<Void> response =
                 ApiResponse.error(ex.getMessage());
@@ -119,4 +147,7 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.FORBIDDEN)
                 .body(response);
     }
+
+
+
 }
