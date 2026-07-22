@@ -1,0 +1,35 @@
+export const DEPARTMENTS = [
+  'CSE',
+  'ISE',
+  'AIML',
+  'AIDS',
+  'ECE',
+  'EEE',
+  'ME',
+  'CIVIL',
+  'MBA',
+  'MCA',
+]
+
+export const RESPONSIBLE_DEPARTMENTS = [
+  'FACILITIES',
+  'ELECTRICAL_MAINTENANCE',
+  'PLUMBING',
+  'HOUSEKEEPING',
+  'IT_SUPPORT',
+  'ACADEMIC_AFFAIRS',
+  'TRANSPORT_OFFICE',
+  'HOSTEL_ADMINISTRATION',
+  'CANTEEN_MANAGEMENT',
+  'CAMPUS_SECURITY',
+  'GENERAL_ADMINISTRATION',
+]
+
+export const ROLES = [
+  'STAFF',
+  'CLASS_TEACHER',
+  'HOD',
+  'DEAN',
+  'PRINCIPAL',
+  'ADMIN',
+]

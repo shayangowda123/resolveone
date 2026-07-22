@@ -436,7 +436,6 @@ const StudentComplaintDetailPage = () => {
 
                 <p className="mt-3 leading-7 text-slate-400">
                   {complaint.aiReason ||
-                    complaint.aiReasoning ||
                     'No AI reasoning available.'}
                 </p>
               </div>
@@ -578,24 +577,28 @@ const StudentComplaintDetailPage = () => {
             </div>
 
             <div className="mt-5">
-              {complaint.assignedStaff ? (
-                <p className="text-sm font-medium text-slate-200">
-                  {complaint.assignedStaff.name ||
-                    complaint.assignedStaff.fullName ||
-                    'Assigned staff member'}
-                </p>
-              ) : (
-                <>
-                  <p className="text-sm font-medium text-slate-300">
-                    Awaiting assignment
-                  </p>
+    {complaint.assignedToName ? (
+      <>
+        <p className="text-sm font-medium text-slate-200">
+          {complaint.assignedToName}
+        </p>
 
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    The responsible department has not assigned a
-                    staff member yet.
-                  </p>
-                </>
-              )}
+        <p className="mt-2 text-sm text-slate-600">
+          Assigned staff member
+        </p>
+      </>
+    ) : (
+      <>
+        <p className="text-sm font-medium text-slate-300">
+          Awaiting assignment
+        </p>
+
+        <p className="mt-2 text-sm leading-6 text-slate-600">
+          The responsible department has not assigned a
+          staff member yet.
+        </p>
+      </>
+    )}
             </div>
           </section>
 

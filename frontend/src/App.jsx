@@ -1,5 +1,8 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 
+import AdminDashboardPage from './pages/admin/AdminDashboardPage'
+import EmployeeManagementPage from './pages/admin/EmployeeManagementPage'
+
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
 import RegisterPage from './pages/auth/RegisterPage'
@@ -145,6 +148,26 @@ const App = () => {
           />
         }
       />
+
+      <Route
+        element={
+          <ProtectedRoute
+            allowedRoles={['ADMIN']}
+          />
+        }
+      >
+        <Route element={<AppLayout />}>
+          <Route
+            path="/admin/dashboard"
+            element={<AdminDashboardPage />}
+          />
+
+          <Route
+            path="/admin/employees"
+            element={<EmployeeManagementPage />}
+          />
+        </Route>
+      </Route>
     </Routes>
   )
 }

@@ -13,6 +13,7 @@ import {
   ShieldCheck,
   Workflow,
   X,
+  Users,
 } from 'lucide-react'
 import {
   NavLink,
@@ -75,6 +76,11 @@ const NAVIGATION_BY_ROLE = {
       path: '/admin/dashboard',
       icon: LayoutDashboard,
     },
+    {
+        label: 'Employees',
+        path: '/admin/employees',
+        icon: Users,
+    }
   ],
 }
 
@@ -403,44 +409,58 @@ const AppLayout = () => {
             </h1>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="relative hidden xl:block">
-              <Search
-                size={16}
-                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
-              />
+<div className="flex items-center gap-2">
 
-              <input
-                type="search"
-                placeholder="Search workspace"
-                className="h-10 w-56 rounded-xl border border-white/[0.07] bg-white/[0.025] pl-10 pr-4 text-sm text-slate-200 outline-none placeholder:text-slate-700 focus:border-indigo-400/30"
-              />
-            </div>
+  <div className="relative hidden xl:block">
+    <Search
+      size={16}
+      className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600"
+    />
 
-            <button
-              type="button"
-              className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-500 hover:text-white"
-              aria-label="Notifications"
-            >
-              <Bell size={18} />
-            </button>
+    <input
+      type="search"
+      placeholder="Search workspace"
+      className="h-10 w-56 rounded-xl border border-white/[0.07] bg-white/[0.025] pl-10 pr-4 text-sm text-slate-200 outline-none placeholder:text-slate-700 focus:border-indigo-400/30"
+    />
+  </div>
 
-            <div className="hidden h-10 items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 sm:flex">
-              <ShieldCheck
-                size={16}
-                className="text-emerald-400"
-              />
+  <button
+    type="button"
+    className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-white/[0.07] bg-white/[0.025] text-slate-500 hover:text-white"
+    aria-label="Notifications"
+  >
+    <Bell size={18} />
+  </button>
 
-              <span className="text-xs font-medium text-slate-400">
-                {user?.role}
-              </span>
-            </div>
+<p className="text-red-500 text-xl">
+HELLO
+</p>
+  <button
+    type="button"
+    onClick={handleLogout}
+    className="flex items-center gap-2 rounded-full border border-red-500 bg-red-500 px-4 py-2 text-white"
+  >
+    <LogOut size={16} />
+    Logout
+  </button>
 
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-xs font-semibold text-white sm:hidden">
-              {getInitials(user?.name)}
-            </div>
-          </div>
-        </header>
+  <div className="hidden h-10 items-center gap-2 rounded-xl border border-white/[0.07] bg-white/[0.025] px-3 sm:flex">
+    <ShieldCheck
+      size={16}
+      className="text-emerald-400"
+    />
+
+    <span className="text-xs font-medium text-slate-400">
+      {user?.role}
+    </span>
+  </div>
+
+  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-500 text-xs font-semibold text-white sm:hidden">
+    {getInitials(user?.name)}
+  </div>
+
+</div>
+ </header>
 
         <main className="relative mx-auto w-full max-w-[1600px] p-4 sm:p-6 lg:p-8">
           <Outlet />

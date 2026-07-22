@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import StatCard from '../../components/dashboard/StatCard'
 import {
   AlertTriangle,
   Bell,
@@ -351,34 +351,7 @@ const ManagementDashboardPage = () => {
   )
 }
 
-const StatCard = ({
-  label,
-  value,
-  description,
-  icon,
-}) => {
-  return (
-    <div className="rounded-[1.5rem] border border-white/10 bg-[#0d1422] p-6">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-slate-500">{label}</p>
 
-          <p className="mt-3 text-4xl font-semibold">
-            {value}
-          </p>
-        </div>
-
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-indigo-400/15 bg-indigo-400/[0.07] text-indigo-300">
-          {icon}
-        </div>
-      </div>
-
-      <p className="mt-5 text-sm text-slate-600">
-        {description}
-      </p>
-    </div>
-  )
-}
 
 const StatusBadge = ({ value }) => {
   return (
